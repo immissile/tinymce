@@ -11,13 +11,14 @@ UnitTest.asynctest('Editor resize test', (success, failure) => {
   Theme();
 
   TinyLoader.setup((editor: Editor, onSuccess, onFailure) => {
-    const cAssertEditorSize = (expectedWidth: number, expectedHeight: number) => Chain.control(
-      Chain.op((container: SugarElement) => {
-        Assertions.assertEq(`Editor should be ${expectedHeight}px high`, expectedHeight, container.dom.offsetHeight);
-        Assertions.assertEq(`Editor should be ${expectedWidth}px wide`, expectedWidth, container.dom.offsetWidth);
-      }),
-      Guard.addLogging('Ensure that the editor has resized')
-    );
+    const cAssertEditorSize = (expectedWidth: number, expectedHeight: number) =>
+      Chain.control(
+        Chain.op((container: SugarElement) => {
+          Assertions.assertEq(`Editor should be ${expectedHeight}px high`, expectedHeight, container.dom.offsetHeight);
+          Assertions.assertEq(`Editor should be ${expectedWidth}px wide`, expectedWidth, container.dom.offsetWidth);
+        }),
+        Guard.addLogging('Ensure that the editor has resized')
+      );
 
     Pipeline.async({ }, [
       Chain.asStep(SugarBody.body(), [
@@ -26,6 +27,14 @@ UnitTest.asynctest('Editor resize test', (success, failure) => {
           editor.dom.setStyles(editor.getContainer(), {
             border: '2px solid #ccc'
           });
+        }),
+        Chain.op(() => {
+          const html = document.documentElement;
+          const sink = html.getElementsByClassName('tox-silver-sink').item(0);
+
+          const expectedWidth = html.clientWidth;
+
+          Assertions.assertEq(`Sink should be ${expectedWidth}px wide`, expectedWidth, sink.clientWidth);
         }),
         Chain.label('Test resize with max/min sizing', NamedChain.asChain([
           NamedChain.direct(NamedChain.inputName(), Chain.identity, 'body'),

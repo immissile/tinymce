@@ -330,7 +330,12 @@ const setup = (editor: Editor): RenderInfo => {
 
   const uiMothership = Gui.takeover(sink);
 
-  Events.setup(editor, mothership, uiMothership);
+  const resizeMothership = () => {
+    const html = document.documentElement;
+    Css.set(uiMothership.element, 'width', html.clientWidth + 'px');
+  };
+
+  Events.setup(editor, mothership, uiMothership, resizeMothership);
 
   const getUi = () => {
     const channels = {
@@ -397,6 +402,8 @@ const setup = (editor: Editor): RenderInfo => {
 
     const elm = editor.getElement();
     const height = setEditorSize();
+
+    resizeMothership();
 
     const uiComponents: RenderUiComponents = { mothership, uiMothership, outerContainer };
     const args: RenderArgs = { targetNode: elm, height };
