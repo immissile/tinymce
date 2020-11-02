@@ -10,7 +10,7 @@ import { Arr } from '@ephox/katamari';
 import { DomEvent, EventArgs, SugarElement } from '@ephox/sugar';
 import Editor from 'tinymce/core/api/Editor';
 
-const setup = (editor: Editor, mothership: Gui.GuiSystem, uiMothership: Gui.GuiSystem, resizeMothership: () => void) => {
+const setup = (editor: Editor, mothership: Gui.GuiSystem, uiMothership: Gui.GuiSystem) => {
   const broadcastEvent = (name: string, evt: EventArgs) => {
     Arr.each([ mothership, uiMothership ], (ship) => {
       ship.broadcastEvent(name, evt);
@@ -49,7 +49,6 @@ const setup = (editor: Editor, mothership: Gui.GuiSystem, uiMothership: Gui.GuiS
   // Window events
   const onWindowScroll = (evt: UIEvent) => broadcastEvent(SystemEvents.windowScroll(), DomEvent.fromRawEvent(evt));
   const onWindowResize = (evt: UIEvent) => {
-    resizeMothership();
     broadcastOn(Channels.repositionPopups(), { });
     broadcastEvent(SystemEvents.windowResize(), DomEvent.fromRawEvent(evt));
   };
