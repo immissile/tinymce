@@ -9,18 +9,31 @@ import { RunOperationOutput, TargetElement, TargetPasteRows, TargetSelection } f
 import * as Bars from 'ephox/snooker/resize/Bars';
 import * as Bridge from 'ephox/snooker/test/Bridge';
 
-type Op<T> = (
+type OperationSingle<T> = (
   wire: ResizeWire,
   table: SugarElement,
   target: T,
   generators: Generators,
 ) => Optional<RunOperationOutput>;
 
+type OperationMultile<T> = (
+  wire: ResizeWire,
+  table: SugarElement,
+  target: T,
+  generators: Generators,
+) => Optional<RunOperationOutput>;
+
+interface TargetLocation {
+  section: number;
+  row: number;
+  column: number;
+}
+
 const checkOld = (
   expCell: { section: number; row: number; column: number },
   expectedHtml: string,
   input: string,
-  operation: Op<TargetElement>,
+  operation: OperationSingle<TargetElement>,
   section: number,
   row: number,
   column: number
@@ -47,11 +60,44 @@ const checkOld = (
   Bars.destroy(wire);
 };
 
+const checkOldMultitude = (
+  expCell: { section: number; row: number; column: number },
+  expectedHtml: string,
+  input: string,
+  operation: OperationMultile<TargetSelection>,
+  paths: TargetLocation[]
+) => {
+  const table = SugarElement.fromHtml<HTMLTableElement>(input);
+  Insert.append(SugarBody.body(), table);
+  const wire = ResizeWire.only(SugarBody.body());
+  const result = operation(wire, table,
+    {
+      selection: Arr.map(paths, (path) =>
+        Hierarchy.follow(table, [ path.section, path.row, path.column, 0 ]).getOrDie()
+      )
+    },
+    Bridge.generators
+  );
+
+  const actualPath = Hierarchy.path(table, result.getOrDie().cursor.getOrDie()).getOrDie('could not find path');
+  assert.eq([ expCell.section, expCell.row, expCell.column ], actualPath);
+
+  // Presence.assertHas(expected, table, 'checking the operation on table: ' + Html.getOuter(table));
+
+  // Let's get rid of size information.
+  const all = [ table ].concat(SelectorFilter.descendants(table, 'td,th'));
+  Arr.each(all, (elem) => Css.remove(elem, 'width') );
+  assert.eq(expectedHtml, Html.getOuter(table));
+  Remove.remove(table);
+  // Ensure all the resize bars are destroyed before of running the next test.
+  Bars.destroy(wire);
+};
+
 const checkPaste = (
   expectedHtml: string,
   input: string,
   pasteHtml: string,
-  operation: Op<TargetPasteRows>,
+  operation: OperationSingle<TargetPasteRows>,
   section: number,
   row: number,
   column: number
@@ -83,7 +129,7 @@ const checkStructure = (
   expCell: { section: number; row: number; column: number},
   expected: string[][],
   input: string,
-  operation: Op<TargetElement>,
+  operation: OperationSingle<TargetElement>,
   section: number,
   row: number,
   column: number,
@@ -113,7 +159,7 @@ const checkDelete = (
   optExpCell: Optional<{ section: number; row: number; column: number }>,
   optExpectedHtml: Optional<{ ie: string; normal: string }>,
   input: string,
-  operation: Op<TargetSelection>,
+  operation: OperationSingle<TargetSelection>,
   cells: { section: number; row: number; column: number }[],
   platform: ReturnType<typeof PlatformDetection.detect>,
 ) => {
@@ -219,5 +265,13 @@ const checkUnmerge = (
   Bars.destroy(wire);
 };
 
-export { checkOld, checkPaste, checkStructure, checkDelete, checkMerge, checkUnmerge };
+export {
+  checkOld,
+  checkOldMultitude,
+  checkPaste,
+  checkStructure,
+  checkDelete,
+  checkMerge,
+  checkUnmerge
+};
 

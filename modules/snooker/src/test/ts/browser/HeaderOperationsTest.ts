@@ -80,7 +80,7 @@ UnitTest.test('HeaderOperationsTest', function () {
     TableOperations.unmakeRowHeader, 0, 0, 1
   );
 
-  Assertions.checkOld({ section: 0, row: 1, column: 0 },
+  Assertions.checkOldMultitude({ section: 0, row: 1, column: 0 },
     '<table><tbody>' +
       '<tr><th scope="row">A1</th><td>B1</td><td>C1</td><td>D1</td></tr>' +
       '<tr><th scope="row">A2</th><td>B2</td><td>C2</td><td>D2</td></tr>' +
@@ -91,10 +91,14 @@ UnitTest.test('HeaderOperationsTest', function () {
       '<tr><td>A2</td><td>B2</td><td>C2</td><td>D2</td></tr>' +
     '</tbody></table>',
 
-    TableOperations.makeColumnHeader, 0, 1, 0
+    TableOperations.makeColumnHeader, [{
+      section: 0,
+      row: 1,
+      column: 0
+    }]
   );
 
-  Assertions.checkOld({ section: 0, row: 1, column: 0 },
+  Assertions.checkOldMultitude({ section: 0, row: 1, column: 0 },
     '<table><tbody>' +
       '<tr><th scope="row">' +
       '<table><tbody>' +
@@ -115,10 +119,14 @@ UnitTest.test('HeaderOperationsTest', function () {
       '<tr><td>A2</td><td>B2</td><td>C2</td><td>D2</td></tr>' +
     '</tbody></table>',
 
-    TableOperations.makeColumnHeader, 0, 1, 0
+    TableOperations.makeColumnHeader, [{
+      section: 0,
+      row: 1,
+      column: 0
+    }]
   );
 
-  Assertions.checkOld({ section: 0, row: 1, column: 0 },
+  Assertions.checkOldMultitude({ section: 0, row: 1, column: 0 },
     '<table><tbody>' +
       '<tr><td>A1</td><td>B1</td><td>C1</td><td>D1</td></tr>' +
       '<tr><td>A2</td><td>B2</td><td>C2</td><td>D2</td></tr>' +
@@ -129,10 +137,14 @@ UnitTest.test('HeaderOperationsTest', function () {
       '<tr><th scope="row">A2</th><td>B2</td><td>C2</td><td>D2</td></tr>' +
     '</tbody></table>',
 
-    TableOperations.unmakeColumnHeader, 0, 1, 0
+    TableOperations.unmakeColumnHeader, [{
+      section: 0,
+      row: 1,
+      column: 0
+    }]
   );
 
-  Assertions.checkOld({ section: 0, row: 1, column: 0 },
+  Assertions.checkOldMultitude({ section: 0, row: 1, column: 0 },
     '<table><tbody>' +
       '<tr><td>' +
       '<table><tbody>' +
@@ -153,10 +165,14 @@ UnitTest.test('HeaderOperationsTest', function () {
       '<tr><th scope="row">A2</th><td>B2</td><td>C2</td><td>D2</td></tr>' +
     '</tbody></table>',
 
-    TableOperations.unmakeColumnHeader, 0, 1, 0
+    TableOperations.unmakeColumnHeader, [{
+      section: 0,
+      row: 1,
+      column: 0
+    }]
   );
 
-  Assertions.checkOld({ section: 0, row: 0, column: 0 },
+  Assertions.checkOldMultitude({ section: 0, row: 0, column: 0 },
     '<table><thead>' +
       '<tr><th scope="row">A1</th><td>B1</td><td>C1</td><td>D1</td></tr>' +
       '</thead>' +
@@ -171,10 +187,14 @@ UnitTest.test('HeaderOperationsTest', function () {
       '<tr><td>A2</td><td>B2</td><td>C2</td><td>D2</td></tr>' +
     '</tbody></table>',
 
-    TableOperations.makeColumnHeader, 0, 0, 0
+    TableOperations.makeColumnHeader, [{
+      section: 0,
+      row: 0,
+      column: 0
+    }]
   );
 
-  Assertions.checkOld({ section: 1, row: 0, column: 0 },
+  Assertions.checkOldMultitude({ section: 1, row: 0, column: 0 },
     '<table><thead>' +
       '<tr><td>A1</td><td>B1</td><td>C1</td><td>D1</td></tr>' +
       '</thead>' +
@@ -189,7 +209,117 @@ UnitTest.test('HeaderOperationsTest', function () {
       '<tr><th scope="row">A2</th><td>B2</td><td>C2</td><td>D2</td></tr>' +
     '</tbody></table>',
 
-    TableOperations.unmakeColumnHeader, 1, 0, 0
+    TableOperations.unmakeColumnHeader, [{
+      section: 1,
+      row: 0,
+      column: 0
+    }]
+  );
+
+  Assertions.checkOldMultitude({ section: 1, row: 0, column: 0 },
+    '<table>' +
+      '<thead>' +
+        '<tr>' +
+          '<th scope="row">A1</th>' +
+          '<th scope="row">B1</th>' +
+          '<td>C1</td>' +
+          '<td>D1</td>' +
+        '</tr>' +
+      '</thead>' +
+      '<tbody>' +
+        '<tr>' +
+          '<th scope="row">A2</th>' +
+          '<th scope="row">B2</th>' +
+          '<td>C2</td>' +
+          '<td>D2</td>' +
+        '</tr>' +
+      '</tbody>' +
+    '</table>',
+
+    '<table>' +
+      '<thead>' +
+        '<tr>' +
+          '<td>A1</td>' +
+          '<td>B1</td>' +
+          '<td>C1</td>' +
+          '<td>D1</td>' +
+        '</tr>' +
+      '</thead>' +
+      '<tbody>' +
+        '<tr>' +
+          '<td>A2</td>' +
+          '<td>B2</td>' +
+          '<td>C2</td>' +
+          '<td>D2</td>' +
+        '</tr>' +
+      '</tbody>' +
+    '</table>',
+
+    TableOperations.makeColumnHeader, [
+      {
+        section: 1,
+        row: 0,
+        column: 0
+      },
+      {
+        section: 1,
+        row: 0,
+        column: 1
+      }
+    ]
+  );
+
+  Assertions.checkOldMultitude({ section: 1, row: 0, column: 0 },
+    '<table>' +
+      '<thead>' +
+        '<tr>' +
+          '<td>A1</td>' +
+          '<td>B1</td>' +
+          '<td>C1</td>' +
+          '<td>D1</td>' +
+        '</tr>' +
+      '</thead>' +
+      '<tbody>' +
+        '<tr>' +
+          '<td>A2</td>' +
+          '<td>B2</td>' +
+          '<td>C2</td>' +
+          '<td>D2</td>' +
+        '</tr>' +
+      '</tbody>' +
+    '</table>',
+
+    '<table>' +
+      '<thead>' +
+        '<tr>' +
+          '<th scope="row">A1</th>' +
+          '<th scope="row">B1</th>' +
+          '<td>C1</td>' +
+          '<td>D1</td>' +
+        '</tr>' +
+      '</thead>' +
+      '<tbody>' +
+        '<tr>' +
+          '<th scope="row">A2</th>' +
+          '<th scope="row">B2</th>' +
+          '<td>C2</td>' +
+          '<td>D2</td>' +
+        '</tr>' +
+      '</tbody>' +
+    '</table>',
+
+    TableOperations.unmakeColumnHeader, [
+      {
+        section: 1,
+        row: 0,
+        column: 0
+      },
+      {
+        section: 1,
+        row: 0,
+        column: 1
+      }
+    ]
   );
 
   Assertions.checkOld({ section: 0, row: 0, column: 1 },

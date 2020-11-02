@@ -42,8 +42,8 @@ export interface TableActions {
   pasteRowsAfter: AdvancedPasteTableAction;
   setTableCellType: SimpleTableAction;
   setTableRowType: SimpleTableAction;
-  makeColumnHeader: ElementTableAction;
-  unmakeColumnHeader: ElementTableAction;
+  makeColumnHeader: CombinedTargetsTableAction;
+  unmakeColumnHeader: CombinedTargetsTableAction;
   getTableRowType: (editor: Editor) => string;
   getTableCellType: (editor: Editor) => string;
   getTableColType: (table: SugarElement<HTMLTableElement>, target: RunOperation.TargetSelection) => string;
