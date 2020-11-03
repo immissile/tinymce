@@ -371,7 +371,7 @@ UnitTest.test('HeaderOperationsTest', function () {
       }]
     );
 
-    Assertions.checkOldMultiple({ section: 1, row: 0, column: 1 },
+    Assertions.checkOldMultiple({ section: 0, row: 0, column: 1 },
       '<table>' +
         '<thead>' +
           '<tr>' +
@@ -404,8 +404,6 @@ UnitTest.test('HeaderOperationsTest', function () {
             '<th scope="col">D2</th>' +
           '</tr>' +
         '</thead>' +
-        '<tbody>' +
-        '</tbody>' +
       '</table>',
 
       TableOperations.unmakeRowsHeader, [
