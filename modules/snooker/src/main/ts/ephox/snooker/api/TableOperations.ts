@@ -1,4 +1,4 @@
-import { Arr, Fun, Optional } from '@ephox/katamari';
+import { Arr, Fun, Optional, Type } from '@ephox/katamari';
 import { Remove, SugarElement, SugarNode } from '@ephox/sugar';
 import * as DetailsList from '../model/DetailsList';
 import * as GridRow from '../model/GridRow';
@@ -149,17 +149,37 @@ const opMakeRowHeader = function (grid: Structs.RowCells[], detail: Structs.Deta
   return bundle(newGrid, detail.row, detail.column);
 };
 
-const opMakeColumnHeader = function (initialGrid: Structs.RowCells[], details: Structs.DetailExt[], comparator: CompElm, genWrappers: GeneratorsTransform) {
-  const columns = uniqueColumns(details);
-  let currentGrid = initialGrid;
+// Function added to match opMakeColumnsHeader, but not used anywhere.
+const opMakeRowsHeader = function (initialGrid: Structs.RowCells[], details: Structs.DetailExt[], comparator: CompElm, genWrappers: GeneratorsTransform) {
+  const rows = uniqueRows(details);
 
-  Arr.each(columns, (column) => {
-    currentGrid = TransformOperations.replaceColumn(currentGrid, column.column, comparator, genWrappers.replaceOrInit);
-  });
+  const newGrid = Arr.foldl(rows, (currentGrid, row) =>
+    TransformOperations.replaceRow(currentGrid, row.row, comparator, genWrappers.replaceOrInit),
+  initialGrid);
 
   const first = details[0];
+  const hasFirst = Type.isObject(first);
 
-  return bundle(currentGrid, first ? first.row : 0, first ? first.column : 0);
+  return bundle(newGrid, hasFirst ? first.row : 0, hasFirst ? first.column : 0);
+};
+
+const opMakeColumnHeader = function (initialGrid: Structs.RowCells[], detail: Structs.DetailExt, comparator: CompElm, genWrappers: GeneratorsTransform) {
+  const newGrid = TransformOperations.replaceColumn(initialGrid, detail.column, comparator, genWrappers.replaceOrInit);
+
+  return bundle(newGrid, detail.row, detail.column);
+};
+
+const opMakeColumnsHeader = function (initialGrid: Structs.RowCells[], details: Structs.DetailExt[], comparator: CompElm, genWrappers: GeneratorsTransform) {
+  const columns = uniqueColumns(details);
+
+  const newGrid = Arr.foldl(columns, (currentGrid, column) =>
+    TransformOperations.replaceColumn(currentGrid, column.column, comparator, genWrappers.replaceOrInit),
+  initialGrid);
+
+  const first = details[0];
+  const hasFirst = Type.isObject(first);
+
+  return bundle(newGrid, hasFirst ? first.row : 0, hasFirst ? first.column : 0);
 };
 
 const opUnmakeRowHeader = function (grid: Structs.RowCells[], detail: Structs.DetailExt, comparator: CompElm, genWrappers: GeneratorsTransform) {
@@ -167,17 +187,37 @@ const opUnmakeRowHeader = function (grid: Structs.RowCells[], detail: Structs.De
   return bundle(newGrid, detail.row, detail.column);
 };
 
-const opUnmakeColumnHeader = function (initialGrid: Structs.RowCells[], details: Structs.DetailExt[], comparator: CompElm, genWrappers: GeneratorsTransform) {
-  const columns = uniqueColumns(details);
-  let currentGrid = initialGrid;
+// Function added to match opUnmakeColumnsHeader, but not used anywhere.
+const opUnmakeRowsHeader = function (initialGrid: Structs.RowCells[], details: Structs.DetailExt[], comparator: CompElm, genWrappers: GeneratorsTransform) {
+  const rows = uniqueRows(details);
 
-  Arr.each(columns, (column) => {
-    currentGrid = TransformOperations.replaceColumn(currentGrid, column.column, comparator, genWrappers.replaceOrInit);
-  });
+  const newGrid = Arr.foldl(rows, (currentGrid, row) =>
+    TransformOperations.replaceRow(currentGrid, row.row, comparator, genWrappers.replaceOrInit),
+  initialGrid);
 
   const first = details[0];
+  const hasFirst = Type.isObject(first);
 
-  return bundle(currentGrid, first ? first.row : 0, first ? first.column : 0);
+  return bundle(newGrid, hasFirst ? first.row : 0, hasFirst ? first.column : 0);
+};
+
+const opUnmakeColumnHeader = function (initialGrid: Structs.RowCells[], detail: Structs.DetailExt, comparator: CompElm, genWrappers: GeneratorsTransform) {
+  const newGrid = TransformOperations.replaceColumn(initialGrid, detail.column, comparator, genWrappers.replaceOrInit);
+
+  return bundle(newGrid, detail.row, detail.column);
+};
+
+const opUnmakeColumnsHeader = function (initialGrid: Structs.RowCells[], details: Structs.DetailExt[], comparator: CompElm, genWrappers: GeneratorsTransform) {
+  const columns = uniqueColumns(details);
+
+  const newGrid = Arr.foldl(columns, (currentGrid, column) =>
+    TransformOperations.replaceColumn(currentGrid, column.column, comparator, genWrappers.replaceOrInit),
+  initialGrid);
+
+  const first = details[0];
+  const hasFirst = Type.isObject(first);
+
+  return bundle(newGrid, hasFirst ? first.row : 0, hasFirst ? first.column : 0);
 };
 
 const opSplitCellIntoColumns = function (grid: Structs.RowCells[], detail: Structs.DetailExt, comparator: CompElm, genWrappers: GeneratorsModification) {
@@ -321,10 +361,14 @@ export const splitCellIntoColumns = run(opSplitCellIntoColumns, onCell, resize, 
 export const splitCellIntoRows = run(opSplitCellIntoRows, onCell, Fun.noop, Fun.noop, Generators.modification);
 export const eraseColumns = run(opEraseColumns, onCells, resize, prune, Generators.modification);
 export const eraseRows = run(opEraseRows, onCells, Fun.noop, prune, Generators.modification);
-export const makeColumnHeader = run(opMakeColumnHeader, onCells, Fun.noop, Fun.noop, Generators.transform('row', 'th'));
-export const unmakeColumnHeader = run(opUnmakeColumnHeader, onCells, Fun.noop, Fun.noop, Generators.transform(null, 'td'));
+export const makeColumnHeader = run(opMakeColumnHeader, onCell, Fun.noop, Fun.noop, Generators.transform('row', 'th'));
+export const makeColumnsHeader = run(opMakeColumnsHeader, onCells, Fun.noop, Fun.noop, Generators.transform('row', 'th'));
+export const unmakeColumnHeader = run(opUnmakeColumnHeader, onCell, Fun.noop, Fun.noop, Generators.transform(null, 'td'));
+export const unmakeColumnsHeader = run(opUnmakeColumnsHeader, onCells, Fun.noop, Fun.noop, Generators.transform(null, 'td'));
 export const makeRowHeader = run(opMakeRowHeader, onCell, Fun.noop, Fun.noop, Generators.transform('col', 'th'));
+export const makeRowsHeader = run(opMakeRowsHeader, onCells, Fun.noop, Fun.noop, Generators.transform('col', 'th'));
 export const unmakeRowHeader = run(opUnmakeRowHeader, onCell, Fun.noop, Fun.noop, Generators.transform(null, 'td'));
+export const unmakeRowsHeader = run(opUnmakeRowsHeader, onCells, Fun.noop, Fun.noop, Generators.transform(null, 'td'));
 export const mergeCells = run(opMergeCells, onMergable, Fun.noop, Fun.noop, Generators.merging);
 export const unmergeCells = run(opUnmergeCells, onUnmergable, resize, Fun.noop, Generators.merging);
 export const pasteCells = run(opPasteCells, onPaste, resize, Fun.noop, Generators.modification);

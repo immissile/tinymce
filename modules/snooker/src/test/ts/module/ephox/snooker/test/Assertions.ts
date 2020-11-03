@@ -60,7 +60,7 @@ const checkOld = (
   Bars.destroy(wire);
 };
 
-const checkOldMultitude = (
+const checkOldMultiple = (
   expCell: { section: number; row: number; column: number },
   expectedHtml: string,
   input: string,
@@ -81,8 +81,6 @@ const checkOldMultitude = (
 
   const actualPath = Hierarchy.path(table, result.getOrDie().cursor.getOrDie()).getOrDie('could not find path');
   assert.eq([ expCell.section, expCell.row, expCell.column ], actualPath);
-
-  // Presence.assertHas(expected, table, 'checking the operation on table: ' + Html.getOuter(table));
 
   // Let's get rid of size information.
   const all = [ table ].concat(SelectorFilter.descendants(table, 'td,th'));
@@ -267,7 +265,7 @@ const checkUnmerge = (
 
 export {
   checkOld,
-  checkOldMultitude,
+  checkOldMultiple,
   checkPaste,
   checkStructure,
   checkDelete,

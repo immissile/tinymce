@@ -145,7 +145,7 @@ const registerCommands = (editor: Editor, actions: TableActions, cellSelection: 
 
   editor.addCommand('mceTableColType', (_ui, args) =>
     Obj.get(args, 'type').each((type) =>
-      actOnSelection(type === 'th' ? actions.makeColumnHeader : actions.unmakeColumnHeader)
+      actOnSelection(type === 'th' ? actions.makeColumnsHeader : actions.unmakeColumnsHeader)
     ));
 
   // Register dialog commands
